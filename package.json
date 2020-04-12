@@ -1,0 +1,42 @@
+{
+  "name": "jscad-models",
+  "version": "1.0.0",
+  "description": "Random jscad models",
+  "main": "index.js",
+  "scripts": {
+    "build": "rollup -c",
+    "dev": "rollup -c -w",
+    "start": "sirv public -s"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jeremy-brenner/jscad-models.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jeremy-brenner/jscad-models/issues"
+  },
+  "homepage": "https://github.com/jeremy-brenner/jscad-models#readme",
+  "dependencies": {
+    "@jscad/cli": "^1.10.0",
+    "express": "^4.17.1",
+    "glob": "^7.1.6",
+    "mkdirp": "^1.0.4",
+    "node-watch": "^0.6.3",
+    "sirv-cli": "^0.4.4",
+    "svelte-routing": "^1.4.2",
+    "three": "^0.115.0",
+    "three-stl-loader": "^1.0.6",
+    "ws": "^7.2.3"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^11.0.0",
+    "@rollup/plugin-node-resolve": "^7.0.0",
+    "rollup": "^1.20.0",
+    "rollup-plugin-livereload": "^1.0.0",
+    "rollup-plugin-svelte": "^5.0.3",
+    "rollup-plugin-terser": "^5.1.2",
+    "svelte": "^3.0.0"
+  }
+}

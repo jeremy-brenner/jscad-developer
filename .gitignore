@@ -1,0 +1,6 @@
+/stl/
+/models/
+package-lock.json
+/node_modules/
+/public/build/
+.DS_Store
