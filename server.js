@@ -7,7 +7,14 @@ const { stlFileName } = require('./lib/stlTools.js');
 const fs = require('fs').promises;
 var glob = require("glob")
 
-const modelDir = 'models';
+let modelDir;
+
+if(process.argv[2]) {
+    modelDir = process.argv[2];
+}else{
+    console.log('Please specify a model folder.')
+    process.exit();
+}
 
 const app = express();
 const port = 3000;
@@ -15,8 +22,6 @@ const port = 3000;
 const server = http.createServer(app);
 
 const wss = new WebSocket.Server({server});
-
-
 
 app.use('/', express.static('public'))
 app.use('/stl', express.static('stl'))
