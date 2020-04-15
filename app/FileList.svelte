@@ -31,6 +31,8 @@
         height: 100vh;
         top: 0;
         left: 0;
+        pointer-events:none; 
+        touch-action:none;
     }
 
     filelist {
@@ -39,10 +41,13 @@
         display: none;
         border-right: 1px solid black;
         background-color: white;
+        overflow-x: scroll;
     }
 
     filelist.show {
         display: inline-block;
+        pointer-events: auto; 
+        touch-action: auto;
     }
     
     showHide {      
@@ -53,7 +58,8 @@
         padding: 30px 3px 30px 3px;
         cursor: pointer;     
         background-color: white;
-
+        pointer-events: auto; 
+        touch-action: auto;
     }
 
 </style>

@@ -3,7 +3,7 @@
   export let fileStore;
   let name;
   let current = false;
-  const re = /stl\/(.*)\.stl/;
+  const re = /models\/(.*)\.jscad/;
 
   fileStore.subscribe(file => name = getName(file.url))
    

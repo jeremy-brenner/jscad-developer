@@ -23,15 +23,19 @@ const server = http.createServer(app);
 
 const wss = new WebSocket.Server({server});
 
+const modelPath = '/models';
+
 app.use('/', express.static('public'))
-app.use('/stl', express.static('stl'))
+//app.use('/stl', express.static('stl'))
+app.use(modelPath, express.static(modelDir))
 
 let ws;
 
 wss.on('connection', (w) => {
    ws = w; 
-   glob("stl/**/*.stl", function (er, urls) {
-    sendEvent({type:"list",urls})
+   glob(`${modelDir}/**/*.jscad`, function (er, urls) {
+       console.log(urls.map( u => u.replace(modelDir,modelPath)));
+    sendEvent({type:"list",urls: urls.map( u => u.replace(modelDir,modelPath))})
    })
 });
 
@@ -46,19 +50,18 @@ const sendEvent = (event) => {
 }
 
 const fileChange = (type,name) => {
-    const url = stlFileName(name);
+    const stlFile = stlFileName(name);
+    sendEvent({type, url: name.replace(modelDir,modelPath)});
     if(type == 'remove') {
-        fs.unlink(url)
-            .catch(() => {})
-            .then(() => sendEvent({type, url}));
+        fs.unlink(stlFile)
+            .catch(() => {});
     }else{
         console.log(`${name} changed, rendering`);
-        jscadToStl(name, url)
-            .then(() => console.log('rendered, sending event'))
-            .then(() => sendEvent({type, url}))
+        jscadToStl(name, stlFile)
+            .then(() => console.log('rendered'))
             .catch(error => {
                 console.log(error);
-                sendEvent({type:'error', url, message: error});
+               // sendEvent({type:'error', url, message: error});
             });
             
     }

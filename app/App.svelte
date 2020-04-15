@@ -1,7 +1,9 @@
 <script>
     import FileList from './FileList.svelte';
-    import FileView from './FileView.svelte';
-    import FileLoader from './FileLoader.svelte';
+  //  import FileView from './FileView.svelte';
+//    import FileLoader from './FileLoader.svelte';
+    import JscadView from './JscadView.svelte';
+
     import { createFileStore } from './stores.js';
 
     let socket;
@@ -32,6 +34,7 @@
    }
 
    function handleEvent(event) {
+       console.log({event});
        if(event.type == "list") {
            fileStores = event.urls.map(url => createFileStore({url,type: "unknown"}))
        }
@@ -42,7 +45,6 @@
 
    function updateFileStatus(url,type,message) {
        const fileStore = fileStores.find( fileStore => fileStore.url() == url );
-       console.log({fileStore});
        if(fileStore) {
            fileStore.set({url,type,message})
        }else{
@@ -55,8 +57,9 @@
 
 <main>
   <FileList fileStores="{fileStores}"></FileList>
-  <FileView></FileView>
-  <FileLoader></FileLoader>
+  <JscadView></JscadView>
+  <!-- <FileView></FileView> -->
+  <!-- <FileLoader></FileLoader> -->
 </main>
 
 <style>
