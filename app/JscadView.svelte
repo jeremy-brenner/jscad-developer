@@ -1,5 +1,6 @@
 <script>
   import { currentFileStore } from './stores.js';
+  const fs = require('fs').promises;
 
   let jscadIframe;
   let storeUnsubscribe;
@@ -11,7 +12,9 @@
        if(fileStore) {
            storeUnsubscribe = fileStore.subscribe( file => {
                if(file) {
-                  jscadIframe.contentWindow.postMessage(file.url)
+                   fs.readFile(file.url).then(fileData => {
+                      jscadIframe.contentWindow.postMessage({'design': file.url, 'source': new TextDecoder("utf-8").decode(fileData)})
+                   });
                }
            });
        }
@@ -20,7 +23,7 @@
 
 
 </script>
-<iframe title="jscad" src="/jscad/viewer-options.html" bind:this={jscadIframe} scrolling="no"></iframe>
+<iframe title="jscad" src="jscad/viewer-options.html" bind:this={jscadIframe} scrolling="no"></iframe>
 
 <style>
   iframe {

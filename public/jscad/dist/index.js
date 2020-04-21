@@ -102500,25 +102500,15 @@ function init() {
   AlertUserOfUncaughtExceptions();
 
   var viewer = document.getElementById('viewerContext');
-  var design = viewer.getAttribute('design-url');
 
   gProcessor = new Processor(viewer, {});
 
   window.addEventListener("message", function(event) {
-    let design = event.data;
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', design, true);
-    gProcessor.setStatus('Loading ' + design + " <img id=busy src='imgs/busy.gif'>");
-
-    xhr.onload = function () {
-      var source = this.responseText;
-
-      if (design.match(/\.jscad$/i) || design.match(/\.js$/i)) {
-        gProcessor.setStatus('Processing ' + design + " <img id=busy src='imgs/busy.gif'>");
-        gProcessor.setJsCad(source, design);
-      }
-    };
-    xhr.send();
+    let design = event.data.design;
+    let source = event.data.source;
+    if (design.match(/\.jscad$/i) || design.match(/\.js$/i)) {
+      gProcessor.setJsCad(source, design);
+    }
   });
 }
 

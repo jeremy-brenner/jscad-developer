@@ -6,6 +6,7 @@ const currentGeometryStore = writable();
 function createFileStore(values) {
     const { subscribe, set, update } = writable(values);
     let url = values.url;
+    console.log(values);
     return {
         subscribe,
         set: (values) => {
