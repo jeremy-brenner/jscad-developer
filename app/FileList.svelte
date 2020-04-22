@@ -1,29 +1,8 @@
 <script>    
     import File from './File.svelte';
-    import { onMount } from 'svelte';
-    import { createFileStore } from './stores.js';
-    const watch = require('node-watch');
+    import { fileListStore } from './stores.js';
 
-    const glob = require("glob")
-    let modelDir = '../jscad-models';
-    let show = true;
-    let fileStores = [];
-
-    const updateFileStatus = (type,url) => {
-        const fileStore = fileStores.find( fileStore => fileStore.url() == url );
-        if(fileStore) {
-            fileStore.set({url,type})
-        }else{
-            fileStores.push(createFileStore({url,type}))
-        }
-    }
-
-    onMount(() => {
-        glob(`${modelDir}/**/*.jscad`, function (er, urls) {
-            fileStores = urls.map(url => createFileStore({url,type: "unknown"}))
-        });
-        watch(modelDir, { recursive: true }, updateFileStatus );
-    });
+    let show;
 
     function showHide() {
         show = !show;
@@ -32,8 +11,8 @@
 
 <div>
     <filelist class:show="{show}">
-    {#each fileStores as fileStore}
-        <File fileStore={fileStore}></File>
+    {#each $fileListStore as file}
+        <File file={file}></File>
     {/each}
     </filelist>
     <showHide on:click="{showHide}">
@@ -57,7 +36,6 @@
     }
 
     filelist {
-        width: 40%;
         height: 100%;
         display: none;
         border-right: 1px solid black;

@@ -1,25 +1,19 @@
 <script>
-  import { currentFileStore } from './stores.js';
-  export let fileStore;
-  let name;
-  let current = false;
-  const re = /models\/(.*)\.jscad/;
+  import { currentFileStore, currentDirStore } from './stores.js';
 
-  fileStore.subscribe(file => name = getName(file.url))
-   
-  currentFileStore.subscribe(fs => current = fs == fileStore);
+  export let file;
 
-  function getName(url) {
-    return re.exec(url)[1];
+  function currentStore() {
+    return file.type=="file" ? currentFileStore : currentDirStore;
   }
 
   function setCurrent() {
-      currentFileStore.set(fileStore);
+    currentStore().set(file.fullPath);
   }
 </script>
 
-<div on:click='{setCurrent}' class:current={current}>
-  {name}
+<div on:click='{setCurrent}' class:current={file.fullPath == $currentFileStore}>
+  {file.name}
 </div>
 
 <style>
