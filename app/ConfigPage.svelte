@@ -9,49 +9,69 @@
     show = !show;
   }
 
-  function selectDir() {
+  function selectDir(key) {
      dialog.showOpenDialog({ properties: ['openDirectory'] })
       .then(({canceled, filePaths}) => {
         if(canceled) {
           retrurn;
         }
-        configStore.updateKey('startDirSelection', filePaths[0])
+        configStore.updateKey(key, filePaths[0])
       });
   }
 
   function setStartDirRemember() {
-    configStore.updateKey('startDirOption',"remember");
+    configStore.updateKey('startDirBehavior',"remember");
   }
 
   function setStartDirSelected() {
-    configStore.updateKey('startDirOption',"selected");
+    configStore.updateKey('startDirBehavior',"selected");
+  }
+
+  function setOutputStl() {
+    configStore.toggleKey('outputStl');
   }
 </script>
 
 
 <configPage>
   <configPanel class:show="{show}">
-    <div>Starting directory:</div>
+    <h1>Home</h1>
     <div>
-      <startDirOption on:click="{setStartDirRemember}" class:selected="{$configStore.startDirOption == 'remember'}">
+      <startDirOption on:click="{setStartDirRemember}" class='selectable' class:selected="{$configStore.startDirBehavior == 'remember'}">
         Remember my location
       </startDirOption>
-      <startDirOption on:click="{setStartDirSelected}" class:selected="{$configStore.startDirOption == 'selected'}">
+      <startDirOption on:click="{setStartDirSelected}" class='selectable' class:selected="{$configStore.startDirBehavior == 'selected'}">
         Always start at selected location
       </startDirOption>
     </div>
-    {#if $configStore.startDirOption == 'selected'}
+    {#if $configStore.startDirBehavior == 'selected'}
       <div>
-        <selectDir on:click="{selectDir}">Select location</selectDir>
-        {$configStore.startDirSelection}
+        <selectDir on:click="{() => selectDir("startDir")}">Select location</selectDir>
+        {$configStore.startDir}
       </div>
     {/if}
+    <h1>STL</h1>
+    <div>
+      <outputStlOption on:click="{setOutputStl}" class='selectable' class:selected="{$configStore.outputStl}">
+        Output STL on update
+      </outputStlOption>
+      {#if $configStore.outputStl}
+        <div>
+          <selectDir on:click="{() => selectDir("stlDir")}">Select location</selectDir>
+          {$configStore.stlDir}
+        </div>
+      {/if}
+    </div>
   </configPanel>
   <icon on:click="{showHide}">
   </icon>
 </configPage>
 
 <style>
+  div {
+    margin-top: 10px;
+  }
+
   configPage {
     position: absolute;
     width: 100vw;
@@ -93,12 +113,18 @@
     touch-action: auto;
   }
 
-  startDirOption {
+  selectDir {
+    cursor: pointer;
+    background-color:lightgrey;
+    border: 1px solid black;
+  }
+
+  .selectable {
     cursor: pointer;
     border: 2px solid lightgrey;
   }
 
-  startDirOption.selected {
+  .selectable.selected {
     border-color: black;
   }
 </style>

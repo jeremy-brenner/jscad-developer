@@ -7,7 +7,7 @@ const watch = require('node-watch');
 const settings = require('electron-settings');
 
 const defaultConfig = {
-    startDirOption: 'remember'
+    startDirBehavior: 'remember'
 }
 const startupConfig = settings.get('config', defaultConfig );
 
@@ -34,9 +34,9 @@ currentDirStore.subscribe(currentDir => {
 });
 
 function initialDirectory() {
-    return startupConfig.startDirOption == 'remember' ? 
+    return startupConfig.startDirBehavior == 'remember' ? 
         settings.get('currentDir') :
-        startupConfig.startDirSelection
+        startupConfig.startDir
 }
 
 function createConfigStore() {
@@ -50,9 +50,18 @@ function createConfigStore() {
         });
     }
 
+    const toggleKey = key => {
+        update(config => {
+            const newConfig = Object.assign(config, {[key]: !config[key] })
+            settings.set('config', newConfig);
+            return newConfig;
+        });
+    }
+
 	return {
         subscribe,
-        updateKey
+        updateKey,
+        toggleKey
 	};
 }
 
