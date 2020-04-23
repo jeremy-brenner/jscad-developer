@@ -1,7 +1,7 @@
 {
-  "name": "jscad-models",
+  "name": "jscad-developer",
   "version": "1.0.0",
-  "description": "Random jscad models",
+  "description": "jscad developer",
   "main": "main.js",
   "scripts": {
     "build": "rollup -c",
@@ -10,14 +10,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jeremy-brenner/jscad-models.git"
+    "url": "git+https://github.com/jeremy-brenner/jscad-developer.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/jeremy-brenner/jscad-models/issues"
+    "url": "https://github.com/jeremy-brenner/jscad-developer/issues"
   },
-  "homepage": "https://github.com/jeremy-brenner/jscad-models#readme",
+  "homepage": "https://github.com/jeremy-brenner/jscad-developer#readme",
   "dependencies": {
     "@jscad/cli": "^1.10.0",
     "electron-settings": "^3.2.0",
@@ -27,6 +27,7 @@
     "@rollup/plugin-commonjs": "^11.0.0",
     "@rollup/plugin-node-resolve": "^7.0.0",
     "electron": "^8.2.3",
+    "electron-builder": "^22.5.1",
     "rollup": "^1.20.0",
     "rollup-plugin-svelte": "^5.0.3",
     "rollup-plugin-terser": "^5.1.2",
