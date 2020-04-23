@@ -12,7 +12,7 @@
 <div>
     <filelist class:show="{show}">
     {#each $fileListStore as file}
-        <File file={file}></File>
+        <File file={file}/>
     {/each}
     </filelist>
     <showHide on:click="{showHide}">
@@ -54,6 +54,7 @@
         position: absolute;
         top: 45%;
         border: 1px solid black;
+        border-left-width: 0px;
         padding: 30px 3px 30px 3px;
         cursor: pointer;     
         background-color: white;

@@ -1,20 +1,15 @@
 <script>
-  import { currentFileStore } from './stores.js';
+  import { currentFileChangeStore } from './stores.js';
   const fs = require('fs');
-  const watch = require('node-watch');
 
   let jscadIframe;
-  let watcher;
 
-  currentFileStore.subscribe( fullPath => { 
-    watcher && watcher.close();
-    if(fullPath) {
-      watcher = watch(fullPath, () => loadFile(fullPath));
-      loadFile(fullPath);
-    }
-  });
+  currentFileChangeStore.subscribe(change => change && loadFile(change.fullPath));
 
   function loadFile(fullPath) {
+    if(!fullPath) {
+      return;
+    }
     fs.readFile(fullPath, (err,fileData) => {
        jscadIframe.contentWindow.postMessage({'design': fullPath, 'source': new TextDecoder("utf-8").decode(fileData)})
     });

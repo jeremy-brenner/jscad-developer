@@ -7,31 +7,44 @@ const watch = require('node-watch');
 const settings = require('electron-settings');
 
 const defaultConfig = {
-    startDirBehavior: 'remember'
+    startDirBehavior: 'remember',
+    startDir: homedir,
+    outputStl: false,
+    stlDir: homedir
 }
 const startupConfig = settings.get('config', defaultConfig );
 
-console.log({dir: initialDirectory()});
-
 const currentFileStore = writable();
+const currentFileChangeStore = writable();
 const currentDirStore = writable(initialDirectory() || homedir);
 const fileListStore = writable([]);
 const configStore = createConfigStore();
 
 
-let watcher;
+let dirWatcher;
 
 
 currentDirStore.subscribe(currentDir => {
-    watcher && watcher.close();
+    dirWatcher && dirWatcher.close();
 
     loadDir(currentDir);
 
-    watcher = watch(currentDir, () => {
+    dirWatcher = watch(currentDir, () => {
         loadDir(currentDir);
     });
 
 });
+
+let fileWatcher;
+
+currentFileStore.subscribe( fullPath => { 
+    fileWatcher && fileWatcher.close();
+    if(fullPath) {
+      fileWatcher = watch(fullPath, () => currentFileChangeStore.set({fullPath,changedAt:Date.now()}) );
+      currentFileChangeStore.set({fullPath,changedAt:Date.now()});
+    }
+});
+
 
 function initialDirectory() {
     return startupConfig.startDirBehavior == 'remember' ? 
@@ -114,6 +127,7 @@ function getType(filePath) {
 
 export {
     currentFileStore, 
+    currentFileChangeStore,
     currentDirStore, 
     fileListStore,
     configStore
