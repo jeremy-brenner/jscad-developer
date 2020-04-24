@@ -15,7 +15,7 @@ const defaultConfig = {
 const startupConfig = settings.get('config', defaultConfig );
 
 const currentFileStore = writable();
-const currentFileChangeStore = writable();
+const currentFileDataStore = createCurrentFileDataStore();
 const currentDirStore = writable(initialDirectory() || homedir);
 const fileListStore = writable([]);
 const configStore = createConfigStore();
@@ -39,11 +39,29 @@ let fileWatcher;
 
 currentFileStore.subscribe( fullPath => { 
     fileWatcher && fileWatcher.close();
-    if(fullPath) {
-      fileWatcher = watch(fullPath, () => currentFileChangeStore.set({fullPath,changedAt:Date.now()}) );
-      currentFileChangeStore.set({fullPath,changedAt:Date.now()});
+    if(fullPath) { 
+      fileWatcher = watch(fullPath, () => currentFileDataStore.fileChange(fullPath) );
+      currentFileDataStore.fileChange(fullPath);
     }
 });
+
+
+function createCurrentFileDataStore() {
+    const { subscribe, set } = writable({});
+
+    const fileChange = (fullPath) => {
+        fs.readFile(fullPath, (err,fileData) => {
+            set({
+                data: new TextDecoder("utf-8").decode(fileData),
+                fullPath
+            });
+        });
+    }
+	return {
+        subscribe,
+        fileChange
+	};
+}
 
 
 function initialDirectory() {
@@ -127,7 +145,7 @@ function getType(filePath) {
 
 export {
     currentFileStore, 
-    currentFileChangeStore,
+    currentFileDataStore,
     currentDirStore, 
     fileListStore,
     configStore

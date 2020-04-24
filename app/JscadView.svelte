@@ -1,21 +1,20 @@
 <script>
-  import { currentFileChangeStore } from './stores.js';
+  import { currentFileDataStore } from './stores.js';
+  export let renderStl;
+
   const fs = require('fs');
 
   let jscadIframe;
-
-  currentFileChangeStore.subscribe(change => change && loadFile(change.fullPath));
-
-  function loadFile(fullPath) {
-    if(!fullPath) {
-      return;
-    }
-    fs.readFile(fullPath, (err,fileData) => {
-       jscadIframe.contentWindow.postMessage({'design': fullPath, 'source': new TextDecoder("utf-8").decode(fileData)})
-    });
-  }
+   
+  currentFileDataStore.subscribe(({data, fullPath}) => {
+     if(!data) {
+       return;
+     }
+     jscadIframe.contentWindow.postMessage({fullPath, 'source': data, renderStl})
+  });
 
 </script>
+
 <iframe title="jscad" src="jscad/viewer-options.html" bind:this={jscadIframe} scrolling="no"></iframe>
 
 <style>

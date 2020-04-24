@@ -9,7 +9,7 @@
 <main>
   <FileList/>
   <ConfigPage/>
-  <JscadView/>
+  <JscadView renderStl={$configStore.outputStl}/>
   {#if $configStore.outputStl}
     <StlOutput stlDir={$configStore.stlDir}/>
   {/if}

@@ -7,13 +7,23 @@ function init() {
 
   var viewer = document.getElementById('viewerContext');
 
-  gProcessor = new Processor(viewer, {});
+  let renderStl = false;
+  let fullPath = '';
 
-  window.addEventListener("message", function(event) {
-    let design = event.data.design;
+  gProcessor = new Processor(viewer, {});
+  gProcessor.onchange = (i) => { 
+    if(renderStl) {
+      gProcessor.formatDropdown.selectedIndex = 1; 
+      parent.postMessage({action: 'saveStl', blob: gProcessor.currentObjectsToBlob(), fullPath});
+    }
+  }
+
+  window.addEventListener("message", function(event) {    
     let source = event.data.source;
-    if (design.match(/\.jscad$/i) || design.match(/\.js$/i)) {
-      gProcessor.setJsCad(source, design);
+    fullPath = event.data.fullPath;
+    renderStl = event.data.renderStl
+    if (fullPath.match(/\.jscad$/i) || fullPath.match(/\.js$/i)) {   
+      gProcessor.setJsCad(source, fullPath);
     }
   });
 }

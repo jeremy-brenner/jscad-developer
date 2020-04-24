@@ -1,21 +1,26 @@
 <script>
 	import { onDestroy } from 'svelte';
-  import { currentFileChangeStore } from './stores.js';
-  const { exec } = require("child_process");
+  
+  const fs = require('fs');
   const path = require('path');
 
   export let stlDir;
 
-  const unsubscribe = currentFileChangeStore.subscribe(change => change && convert(change.fullPath));
+  onDestroy(() => {
+    window.removeEventListener("message", (message) => handleMessage(message) );
+  });
 
-  onDestroy(unsubscribe);
+  window.addEventListener("message", (message) => handleMessage(message) );
 
-  function convert(fullPath) {
-    const baseName = path.basename(fullPath, '.jscad');
-    const destFile = path.join(stlDir,`${baseName}.stl`);
-    exec(`npx openjscad ${fullPath} -o ${destFile}`, (error, stdout, stderr) => {
-       console.log('stl convert', {error, stdout, stderr});
-    });
+  function handleMessage({data}) {
+    if(data.action == 'saveStl') {
+      const baseName = path.basename(data.fullPath, '.jscad');
+      const destFile = path.join(stlDir,`${baseName}.stl`);
+      data.blob.arrayBuffer()
+        .then(arrayBuffer => new Uint8Array(arrayBuffer))
+        .then(uint8Array => new Buffer(uint8Array))
+        .then(buffer => fs.writeFileSync(destFile,buffer) );
+    }
   }
 
 </script>

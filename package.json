@@ -6,7 +6,10 @@
   "scripts": {
     "build": "rollup -c",
     "dev": "rollup -c -w",
-    "start": "electron ."
+    "start": "electron .",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder",
+    "postinstall": "electron-builder install-app-deps"
   },
   "repository": {
     "type": "git",
@@ -18,8 +21,18 @@
     "url": "https://github.com/jeremy-brenner/jscad-developer/issues"
   },
   "homepage": "https://github.com/jeremy-brenner/jscad-developer#readme",
+  "build": {
+    "appId": "net.drshoggoth.jscad-developer",
+    "linux": {
+      "category": "Utility",
+      "target": [
+        "snap"
+      ]
+    }
+  },
   "dependencies": {
     "@jscad/cli": "^1.10.0",
+    "electron-root-path": "^1.0.16",
     "electron-settings": "^3.2.0",
     "node-watch": "^0.6.3"
   },
@@ -29,6 +42,7 @@
     "electron": "^8.2.3",
     "electron-builder": "^22.5.1",
     "rollup": "^1.20.0",
+    "rollup-plugin-node-builtins": "^2.1.2",
     "rollup-plugin-svelte": "^5.0.3",
     "rollup-plugin-terser": "^5.1.2",
     "svelte": "^3.0.0",
