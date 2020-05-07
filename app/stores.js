@@ -19,6 +19,7 @@ const currentFileDataStore = createCurrentFileDataStore();
 const currentDirStore = writable(initialDirectory() || homedir);
 const fileListStore = writable([]);
 const configStore = createConfigStore();
+const statusStore = writable("startup");
 
 
 let dirWatcher;
@@ -148,5 +149,6 @@ export {
     currentFileDataStore,
     currentDirStore, 
     fileListStore,
-    configStore
+    configStore,
+    statusStore
 }

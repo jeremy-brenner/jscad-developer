@@ -102506,6 +102506,7 @@ function init() {
 
   gProcessor = new Processor(viewer, {});
   gProcessor.onchange = (i) => { 
+    parent.postMessage({action: 'doneRendering'}); 
     if(renderStl) {
       gProcessor.formatDropdown.selectedIndex = 1; 
       parent.postMessage({action: 'saveStl', blob: gProcessor.currentObjectsToBlob(), fullPath});
