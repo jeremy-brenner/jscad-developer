@@ -1,4 +1,5 @@
 import { writable } from 'svelte/store';
+const esprima = require('esprima');
 const homedir = require('os').homedir();
 const fs = require('fs');
 const path = require('path');
@@ -36,26 +37,60 @@ currentDirStore.subscribe(currentDir => {
 
 });
 
-let fileWatcher;
 
 currentFileStore.subscribe( fullPath => { 
-    fileWatcher && fileWatcher.close();
     if(fullPath) { 
-      fileWatcher = watch(fullPath, () => currentFileDataStore.fileChange(fullPath) );
       currentFileDataStore.fileChange(fullPath);
     }
 });
 
+function getAllIncludes(folder,script) {
+    return getIncludes(script).reduce((acc,cur) => {
+        const fileData = fs.readFileSync(path.join(folder,cur));
+        const subIncludes = getAllIncludes(folder, new TextDecoder("utf-8").decode(fileData));
+        return [...acc,cur,...subIncludes];
+    }, []);
+
+}
+
+function getIncludes(script) {
+    try {
+        return esprima.tokenize(script).reduce((acc,cur,i,all) => {
+            if( cur.type == 'Identifier' && 
+                cur.value == 'include' &&
+                all[i+2].type == 'String' ) {
+                return [...acc, all[i+2].value.slice(1, -1)];
+        }
+        return acc;
+        }, []);
+    } catch {
+        return [];
+    }
+
+}
 
 function createCurrentFileDataStore() {
     const { subscribe, set } = writable({});
 
+    let fileWatchers = {};
+
     const fileChange = (fullPath) => {
-        fs.readFile(fullPath, (err,fileData) => {
-            set({
-                data: new TextDecoder("utf-8").decode(fileData),
-                fullPath
-            });
+        Object.values(fileWatchers).forEach( w => w.close() )
+        fileWatchers = {};
+        fileWatchers[fullPath] = watch(fullPath, () => currentFileDataStore.fileChange(fullPath) );
+
+        const fileData = fs.readFileSync(fullPath);
+        const data = new TextDecoder("utf-8").decode(fileData);
+        const folder = path.dirname(fullPath);
+        getAllIncludes(folder,data).forEach(include => {
+            const watchPath = path.join(folder,include);
+            if(!fileWatchers[watchPath]) {
+                fileWatchers[watchPath] = watch(watchPath, () => currentFileDataStore.fileChange(fullPath) );
+            }
+        })
+        set({
+            data,
+            fullPath
         });
     }
 	return {
