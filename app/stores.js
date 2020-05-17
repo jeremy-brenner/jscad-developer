@@ -60,8 +60,8 @@ function getIncludes(script) {
                 cur.value == 'include' &&
                 all[i+2].type == 'String' ) {
                 return [...acc, all[i+2].value.slice(1, -1)];
-        }
-        return acc;
+            }
+            return acc;
         }, []);
     } catch {
         return [];
